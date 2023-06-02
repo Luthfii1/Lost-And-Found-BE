@@ -40,10 +40,10 @@ app.post('/post/:id', async (req, res) => {
 });
 
 // get all posts
-app.get('/posts', async (req, res) => {
+app.get('/posts/all', async (req, res) => {
     try {
         const allPosts = await pool.query(
-            'SELECT * FROM post'
+            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id;'
         );
         res.json(allPosts.rows);
     } catch (err) {
@@ -55,7 +55,7 @@ app.get('/posts', async (req, res) => {
 app.get('/posts/lost', async (req, res) => {
     try {
         const allPosts = await pool.query(
-            'SELECT * FROM post WHERE status = $1',
+            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1',
             ['Lost']
         );
         res.json(allPosts.rows);
@@ -68,7 +68,7 @@ app.get('/posts/lost', async (req, res) => {
 app.get('/posts/found', async (req, res) => {
     try {
         const allPosts = await pool.query(
-            'SELECT * FROM post WHERE status = $1',
+            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1',
             ['Found']
         );
         res.json(allPosts.rows);
@@ -97,7 +97,7 @@ app.delete('/posts/:id', async (req, res) => {
 app.get('/posts/share', async (req, res) => {
     try {
         const allPosts = await pool.query(
-            'SELECT * FROM post WHERE status = $1',
+            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1',
             ['Share']
         );
         res.json(allPosts.rows);
