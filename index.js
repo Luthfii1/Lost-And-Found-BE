@@ -125,19 +125,13 @@ app.post('/register', async (req, res) => {
         );
 
         // if username or email already exist, return error
-        if (checkUsername.rows.length !== 0) {
-            return res.status(401).json('Username already exist');
+        if (checkUsername.rows.length !== 0 && checkEmail.rows.length !== 0) {
+            return res.status(401).json({ error: 'Email and username already exists' });
         } else if (checkEmail.rows.length !== 0) {
-            return res.status(401).json('Email already exist');
+            return res.status(401).json({ error: 'Email already exists' });
+        } else if (checkUsername.rows.length !== 0) {
+            return res.status(401).json({ error: 'Username already exists' });
         }
-
-        // Check the error
-        // console.log("long character password: " + req.body.password.length);
-        // console.log("long character username: " + username.length);
-        // console.log("long character email: " + email.length);
-        // console.log("long character name: " + name.length);
-        // console.log("long character birth_date: " + birth_date.length);
-        // console.log("long character jurusan_kuliah: " + jurusan_kuliah.length);
 
         // insert into user table
         const newUser = await pool.query(
@@ -146,10 +140,11 @@ app.post('/register', async (req, res) => {
         );
 
         res.json(newUser.rows[0]);
-        
+        console.log("Register success");
 
     } catch (err) {
         console.error(err.message);
+        res.status(500).json({ error: 'Server error' });
     }
 });
 
