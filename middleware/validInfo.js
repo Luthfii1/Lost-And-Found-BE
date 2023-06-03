@@ -1,11 +1,11 @@
 module.exports = async (req, res, next) => {
     const { username, email, password } = req.body;
 
-    function validEmail(userEmail) {
-        // Regex untuk email
-        const re = /\S+@\S+\.\S+/;
-        return re.test(userEmail);
-    }
+    // function validEmail(userEmail) {
+    //     // Regex untuk email
+    //     const re = /\S+@\S+\.\S+/;
+    //     return re.test(userEmail);
+    // }
 
     // if (req.path === "/register") {
     //     console.log(!email.length);

@@ -3,11 +3,12 @@ dotenv.config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const pool = require('./db');
+const pool = require('./config/db');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const jwtGenerator = require('./utils/jwtGenerator');
 const validInfo = require('./middleware/validInfo');
+const authorization = require('./middleware/authorization');
 
 // middleware
 app.use(cors()); // allows us to parse json
@@ -20,18 +21,13 @@ app.post('/post/:id', async (req, res) => {
     try {
         const { post_txt, status } = req.body;
         
-        // set rise_vote to 0
-        const rise_vote = 0;
         // get user_id from params
         const { id } = req.params;
 
-        // // post_id 
-        // const = 22;
-
         // insert into post table
         const newPost = await pool.query(
-            'INSERT INTO post ( post_txt, status, user_id, rise_vote) VALUES ($1, $2, $3, $4) RETURNING *',
-            [ post_txt, status, id, rise_vote]
+            'INSERT INTO post ( post_txt, status, user_id) VALUES ($1, $2, $3) RETURNING *',
+            [ post_txt, status, id]
         );
 
         res.json(newPost.rows[0]);
@@ -42,7 +38,7 @@ app.post('/post/:id', async (req, res) => {
 });
 
 // get all posts
-app.get('/posts/all', async (req, res) => {
+app.get('/posts/all', authorization, async (req, res) => {
     try {
         const allPosts = await pool.query(
             'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id;'
@@ -184,6 +180,16 @@ app.post('/login', validInfo, async (req, res) => {
 
     } catch (err) {
         console.error(err.message);
+    }
+});
+
+// To verify the access
+app.get("/is-verify", authorization, async (req, res) => {
+    try {
+        res.json(true);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server Error");
     }
 });
 
