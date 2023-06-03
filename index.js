@@ -6,6 +6,8 @@ const cors = require('cors');
 const pool = require('./db');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const jwtGenerator = require('./utils/jwtGenerator');
+const validInfo = require('./middleware/validInfo');
 
 // middleware
 app.use(cors()); // allows us to parse json
@@ -148,8 +150,9 @@ app.post('/register', async (req, res) => {
     }
 });
 
+// Login
 // Login using username and password
-app.post('/login', async (req, res) => {
+app.post('/login', validInfo, async (req, res) => {
     try {
         // get the username and password from the request body
         const { username, password } = req.body;
@@ -173,8 +176,11 @@ app.post('/login', async (req, res) => {
             return res.status(401).json('Password is incorrect');
         }
 
+        // generate jwt token
+        const token = jwtGenerator(checkUsername.rows[0].user_id);
+        
         // if username and password is correct, return the user
-        res.json(checkUsername.rows[0]);
+        res.json({ token });
 
     } catch (err) {
         console.error(err.message);
