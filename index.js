@@ -50,7 +50,7 @@ app.get('/posts/all', authorization, async (req, res) => {
 });
 
 // get posts of where status lost
-app.get('/posts/lost', async (req, res) => {
+app.get('/posts/lost', authorization, async (req, res) => {
     try {
         const allPosts = await pool.query(
             'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1',
@@ -63,7 +63,7 @@ app.get('/posts/lost', async (req, res) => {
 });
 
 // get posts of where status found
-app.get('/posts/found', async (req, res) => {
+app.get('/posts/found', authorization, async (req, res) => {
     try {
         const allPosts = await pool.query(
             'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1',
@@ -75,8 +75,21 @@ app.get('/posts/found', async (req, res) => {
     }
 });
 
+// get posts of where status share
+app.get('/posts/share', authorization, async (req, res) => {
+    try {
+        const allPosts = await pool.query(
+            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1',
+            ['Share']
+        );
+        res.json(allPosts.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
 // Delete post using post_id
-app.delete('/posts/:id', async (req, res) => {
+app.delete('/posts/:id', authorization, async (req, res) => {
     try {
         const { id } = req.params;
         const deletePost = await pool.query(
@@ -91,18 +104,6 @@ app.delete('/posts/:id', async (req, res) => {
     }
 });
 
-// get posts of where status share
-app.get('/posts/share', async (req, res) => {
-    try {
-        const allPosts = await pool.query(
-            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1',
-            ['Share']
-        );
-        res.json(allPosts.rows);
-    } catch (err) {
-        console.error(err.message);
-    }
-});
 
 // Register
 app.post('/register', async (req, res) => {
@@ -175,8 +176,8 @@ app.post('/login', validInfo, async (req, res) => {
         // generate jwt token
         const token = jwtGenerator(checkUsername.rows[0].user_id);
         
-        // if username and password is correct, return the user
-        res.json({ token });
+        // if username and password is correct, return the token and user_id
+        res.json({ token, user_id: checkUsername.rows[0].user_id });
 
     } catch (err) {
         console.error(err.message);
