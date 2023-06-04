@@ -41,7 +41,7 @@ app.post('/post/:id', async (req, res) => {
 app.get('/posts/all', authorization, async (req, res) => {
     try {
         const allPosts = await pool.query(
-            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id;'
+            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id ORDER BY post_date DESC;'
         );
         res.json(allPosts.rows);
     } catch (err) {
@@ -53,7 +53,7 @@ app.get('/posts/all', authorization, async (req, res) => {
 app.get('/posts/lost', authorization, async (req, res) => {
     try {
         const allPosts = await pool.query(
-            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1',
+            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1 ORDER BY post_date DESC',
             ['Lost']
         );
         res.json(allPosts.rows);
@@ -66,7 +66,7 @@ app.get('/posts/lost', authorization, async (req, res) => {
 app.get('/posts/found', authorization, async (req, res) => {
     try {
         const allPosts = await pool.query(
-            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1',
+            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1 ORDER BY post_date DESC',
             ['Found']
         );
         res.json(allPosts.rows);
@@ -79,7 +79,7 @@ app.get('/posts/found', authorization, async (req, res) => {
 app.get('/posts/share', authorization, async (req, res) => {
     try {
         const allPosts = await pool.query(
-            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1',
+            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1 ORDER BY post_date DESC',
             ['Share']
         );
         res.json(allPosts.rows);
@@ -194,6 +194,7 @@ app.get("/is-verify", authorization, async (req, res) => {
     }
 });
 
+// Listen to port 5000
 app.listen(5000, () => {
     console.log('Server is running on port 5000');
 });
