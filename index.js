@@ -88,6 +88,21 @@ app.get('/posts/share', authorization, async (req, res) => {
     }
 });
 
+// Delete a post using post_id
+app.delete('/posts/:id', authorization, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletePost = await pool.query(
+            'DELETE FROM post WHERE post_id = $1 RETURNING *',
+            [id]
+        );
+        res.json(deletePost.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+        console.log(err.message);
+    }
+});
+
 // get all posts
 app.get('/posts/all/:id', authorization, async (req, res) => {
     try {
