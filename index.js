@@ -130,11 +130,68 @@ app.put('/update-user/:id', authorization, async (req, res) => {
 
         res.json(updateUserData.rows[0]);
     } catch (err) {
-        console.error(err.message);
+            console.error(err.message);
+                console.log(err.message);
+    }
+});
+
+// Get user posts by param id
+app.get('/posts/all/:id', authorization, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userPosts = await pool.query(
+            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE user_data.user_id = $1 ORDER BY post_date DESC;',
+            [id]
+        );
+        
+        res.json(userPosts.rows);
+    } catch (err) {
+        // console.error(err.message);
         console.log(err.message);
     }
 });
 
+// get posts of where status lost
+app.get('/posts/lost/:id', authorization, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const allPosts = await pool.query(
+            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1 AND user_data.user_id = $2 ORDER BY post_date DESC',
+            ['Lost', id]
+        );
+        res.json(allPosts.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+// get posts of where status found
+app.get('/posts/found/:id', authorization, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const allPosts = await pool.query(
+            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1 AND user_data.user_id = $2 ORDER BY post_date DESC',
+            ['Found', id]
+        );
+        res.json(allPosts.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+// get posts of where status share
+app.get('/posts/share/:id', authorization, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const allPosts = await pool.query(
+            'SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1 AND user_data.user_id = $2 ORDER BY post_date DESC',
+            ['Share', id]
+        );
+        res.json(allPosts.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
 // Register
 app.post('/register', async (req, res) => {
     try {
