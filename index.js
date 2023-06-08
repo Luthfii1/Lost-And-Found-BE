@@ -103,77 +103,37 @@ app.delete('/posts/:id', authorization, async (req, res) => {
     }
 });
 
-// get all posts
-app.get('/posts/all/:id', authorization, async (req, res) => {
+// Get user data
+app.get('/user/:id', authorization, async (req, res) => {
     try {
         const { id } = req.params;
-        const allPosts = await pool.query(
-            `SELECT post_id, post.user_id, username, name, bio, birth_date, jurusan_kuliah, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE post.user_id = $1 ORDER BY post_date DESC;`, [id]
-        );
-        res.json(allPosts.rows);
-    } catch (err) {
-        console.error(err.message);
-    }
-});
-
-// get posts of where status lost
-app.get('/posts/lost/:id', authorization, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const allPosts = await pool.query(
-            `SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1 AND post.user_id = $2 ORDER BY post_date DESC;`,
-            ['Lost'], [id]
-        );
-        res.json(allPosts.rows);
-    } catch (err) {
-        console.error(err.message);
-    }
-});
-
-// get posts of where status found
-app.get('/posts/found/:id', authorization, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const allPosts = await pool.query(
-            `SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1 AND post.user_id = ${id} ORDER BY post_date DESC`,
-            ['Found']
-        );
-        res.json(allPosts.rows);
-    } catch (err) {
-        console.error(err.message);
-    }
-});
-
-// get posts of where status share
-app.get('/posts/share/:id', authorization, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const allPosts = await pool.query(
-            `SELECT post_id, post.user_id, username, post_txt, rise_vote, post_date, status FROM post INNER JOIN user_data ON user_data.user_id = post.user_id WHERE status = $1 AND post.user_id = ${id} ORDER BY post_date DESC`,
-            ['Share']
-        );
-        res.json(allPosts.rows);
-    } catch (err) {
-        console.error(err.message);
-    }
-});
-
-// Delete post using post_id
-app.delete('/posts/:id', authorization, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const deletePost = await pool.query(
-            'DELETE FROM post WHERE post_id = $1',
+        const userData = await pool.query(
+            'SELECT * FROM user_data WHERE user_id = $1',
             [id]
         );
-        
-        res.json('Post deleted');
-
+        res.json(userData.rows[0]);
     } catch (err) {
         console.error(err.message);
+        console.log(err.message);
     }
 });
 
+// Update user data
+app.put('/update-user/:id', authorization, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { username, email, name, birth_date, bio, jurusan_kuliah } = req.body;
+        const updateUserData = await pool.query(
+            'UPDATE user_data SET username = $1, email = $2, name = $3, birth_date = $4, jurusan_kuliah = $5, bio = $6 WHERE user_id = $7 RETURNING *',
+            [username, email, name, birth_date, jurusan_kuliah, bio, id]
+        );
+
+        res.json(updateUserData.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+        console.log(err.message);
+    }
+});
 
 // Register
 app.post('/register', async (req, res) => {
