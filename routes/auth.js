@@ -1,96 +1,7 @@
-const dotenv = require("dotenv");
-dotenv.config();
 const express = require('express');
-const app = express();
-const cors = require('cors');
-const pool = require('./config/db');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
-const jwtGenerator = require('./utils/jwtGenerator');
-const validInfo = require('./middleware/validInfo');
-const authorization = require('./middleware/authorization');
-const getPosts = require('./routes/getPosts');
-const getPostsById = require('./routes/getPostsById');
-
-// middleware
-app.use(cors()); // allows us to parse json
-app.use(express.json()); // allows us to parse json
-
-// ROUTES //
-
-// create a post
-app.post('/post/:id', async (req, res) => {
-    try {
-        const { post_txt, status } = req.body;
-        
-        // get user_id from params
-        const { id } = req.params;
-
-        // insert into post table
-        const newPost = await pool.query(
-            'INSERT INTO post ( post_txt, status, user_id) VALUES ($1, $2, $3) RETURNING *',
-            [ post_txt, status, id]
-        );
-
-        res.json(newPost.rows[0]);
-    } catch (err) {
-        console.error(err.message);
-        console.log(err.message);
-    }
-});
-
-// get all posts path
-app.use('/posts', getPosts);
-app.use('/posts', getPostsById);
-
-
-// Delete a post using post_id
-app.delete('/posts/:id', authorization, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const deletePost = await pool.query(
-            'DELETE FROM post WHERE post_id = $1 RETURNING *',
-            [id]
-        );
-        res.json(deletePost.rows[0]);
-    } catch (err) {
-        console.error(err.message);
-        console.log(err.message);
-    }
-});
-
-// Get user data
-app.get('/user/:id', authorization, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const userData = await pool.query(
-            'SELECT * FROM user_data WHERE user_id = $1',
-            [id]
-        );
-        res.json(userData.rows[0]);
-    } catch (err) {
-        console.error(err.message);
-        console.log(err.message);
-    }
-});
-
-// Update user data
-app.put('/update-user/:id', authorization, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { username, email, name, birth_date, bio, jurusan_kuliah } = req.body;
-        const updateUserData = await pool.query(
-            'UPDATE user_data SET username = $1, email = $2, name = $3, birth_date = $4, jurusan_kuliah = $5, bio = $6 WHERE user_id = $7 RETURNING *',
-            [username, email, name, birth_date, jurusan_kuliah, bio, id]
-        );
-
-        res.json(updateUserData.rows[0]);
-    } catch (err) {
-            console.error(err.message);
-                console.log(err.message);
-    }
-});
-
+const router = express.Router();
+const pool = require('../config/db');
+const authorization = require('../middleware/authorization');
 
 // Register
 app.post('/register', async (req, res) => {
@@ -181,7 +92,4 @@ app.get("/is-verify", authorization, async (req, res) => {
     }
 });
 
-// Listen to port 5000
-app.listen(5000, () => {
-    console.log('Server is running on port 5000');
-});
+module.exports = router;
