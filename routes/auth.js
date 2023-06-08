@@ -2,9 +2,13 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
 const authorization = require('../middleware/authorization');
+const validInfo = require('../middleware/validInfo');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+const jwtGenerator = require('../utils/jwtGenerator');
 
 // Register
-app.post('/register', async (req, res) => {
+router.post('/register', async (req, res) => {
     try {
         // save the password using bcrypt
         const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
@@ -47,7 +51,7 @@ app.post('/register', async (req, res) => {
 
 // Login
 // Login using username and password
-app.post('/login', validInfo, async (req, res) => {
+router.post('/login', validInfo, async (req, res) => {
     try {
         // get the username and password from the request body
         const { username, password } = req.body;
@@ -83,7 +87,7 @@ app.post('/login', validInfo, async (req, res) => {
 });
 
 // To verify the access
-app.get("/is-verify", authorization, async (req, res) => {
+router.get("/is-verify", authorization, async (req, res) => {
     try {
         res.json(true);
     } catch (err) {
