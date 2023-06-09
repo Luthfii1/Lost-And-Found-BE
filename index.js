@@ -12,13 +12,13 @@ const auth = require('./routes/auth');
 const createPosts = require('./routes/createPosts');
 const deletePosts = require('./routes/deletePosts');
 const dataUser = require('./routes/dataUser');
+const chat = require('./routes/chat');
 
 // middleware
 app.use(cors()); // allows us to parse json
 app.use(express.json()); // allows us to parse json
 
 // ROUTES //
-
 // create a post
 app.use('/posts', createPosts);
 // Delete a post using post_id
@@ -31,6 +31,9 @@ app.use('/posts', getPostsById);
 app.use('/auth', auth);
 // get user data and update user data
 app.use('/user', dataUser);
+// get chat data
+app.use('/chat', chat);
+// END ROUTES //
 
 // Listen to port 5000
 app.listen(5000, () => {
