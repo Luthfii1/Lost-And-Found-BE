@@ -13,6 +13,7 @@ const createPosts = require('./routes/createPosts');
 const deletePosts = require('./routes/deletePosts');
 const dataUser = require('./routes/dataUser');
 const chat = require('./routes/chat');
+const updateStatus = require('./routes/updateStatus');
 
 // middleware
 app.use(cors()); // allows us to parse json
@@ -33,6 +34,8 @@ app.use('/auth', auth);
 app.use('/user', dataUser);
 // get chat data
 app.use('/chat', chat);
+// update status become Gotcha!
+app.use('/update', updateStatus);
 // END ROUTES //
 
 // Listen to port 5000

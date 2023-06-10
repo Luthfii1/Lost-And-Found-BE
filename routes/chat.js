@@ -8,26 +8,25 @@ router.get('/:id', authorization, async (req, res) => {
     try {
         const { id } = req.params;
         const listChat = await pool.query(
-            `SELECT DISTINCT ON (rc.id_room)
-                rc.id_room,
-                rc.person_1,
-                u1.username AS username_1,
-                rc.person_2,
-                u2.username AS username_2,
-                dc.time AS last_time,
-                dc.message AS last_message
-            FROM
-                room_chat rc
-            LEFT JOIN
-                detail_chat dc ON rc.id_room = dc.id_room
-            INNER JOIN
-                user_data u1 ON rc.person_1 = u1.user_id
-            INNER JOIN
-                user_data u2 ON rc.person_2 = u2.user_id
-            WHERE
-                rc.person_1 = $1 OR rc.person_2 = $1
-            ORDER BY
-                rc.id_room, dc.time DESC;`,
+            `SELECT *
+                FROM (
+                    SELECT DISTINCT ON (rc.id_room)
+                        rc.id_room,
+                        rc.person_1,
+                        u1.username AS username_1,
+                        rc.person_2,
+                        u2.username AS username_2,
+                        dc.time AS last_time,
+                        dc.message AS last_message
+                    FROM room_chat rc
+                    LEFT JOIN detail_chat dc ON rc.id_room = dc.id_room
+                    INNER JOIN user_data u1 ON rc.person_1 = u1.user_id
+                    INNER JOIN user_data u2 ON rc.person_2 = u2.user_id
+                    WHERE rc.person_1 = $1 OR rc.person_2 = $1
+                    ORDER BY rc.id_room, dc.time DESC
+                ) AS subquery
+                ORDER BY (subquery.last_time IS NULL), subquery.last_time DESC;
+                `,
             [id]
         );
         res.json(listChat.rows);
