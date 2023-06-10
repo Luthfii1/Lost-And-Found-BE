@@ -101,9 +101,6 @@ router.post('/add/:user/:friend', authorization, async (req, res) => {
 
 // Send message
 // check and get existing room
-// SELECT id_room FROM room_chat WHERE (person_1 = 3 AND person_2 = 4) OR (person_1 = 4 AND person_2 = 3);
-// insert message
-// INSERT INTO detail_chat (id_room, sender, receiver, message) VALUES (6, 3, 4, 'Assalamualaykum, look at the stars, look how they shine for you');
 router.post('/send/:sender/:receiver', authorization, async (req, res) => {
     try {
         const { sender, receiver } = req.params;
