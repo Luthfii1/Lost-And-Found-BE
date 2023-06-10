@@ -15,6 +15,7 @@ router.get('/:id', authorization, async (req, res) => {
     } catch (err) {
         console.error(err.message);
         console.log(err.message);
+        console.log('error di get user data');
     }
 });
 
@@ -31,7 +32,8 @@ router.put('/:id', authorization, async (req, res) => {
         res.json(updateUserData.rows[0]);
     } catch (err) {
             console.error(err.message);
-                console.log(err.message);
+            console.log(err.message);
+            console.log('error di update user data');
     }
 });
 

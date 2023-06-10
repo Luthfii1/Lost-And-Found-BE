@@ -20,6 +20,7 @@ router.post('/:id', authorization, async (req, res) => {
     } catch (err) {
         console.error(err.message);
         console.log(err.message);
+        console.log('error di create post');
     }
 });
 

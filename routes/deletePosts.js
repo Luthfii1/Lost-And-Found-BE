@@ -14,6 +14,7 @@ router.delete('/:id', authorization, async (req, res) => {
     } catch (err) {
         console.error(err.message);
         console.log(err.message);
+        console.log('error di delete post');
     }
 });
 

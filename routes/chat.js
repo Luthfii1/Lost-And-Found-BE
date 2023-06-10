@@ -34,6 +34,7 @@ router.get('/:id', authorization, async (req, res) => {
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ error: 'Server error' });
+        console.log('error di get list chat');
     }
 });
 
@@ -67,6 +68,7 @@ router.get('/:user/:friend', authorization, async (req, res) => {
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ error: 'Server error' });
+        console.log('error di get detail chat');
     }
 });
 
@@ -96,6 +98,7 @@ router.post('/add/:user/:friend', authorization, async (req, res) => {
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ error: 'Server error' });
+        console.log('error di add friend');
     }
 });
 
@@ -121,6 +124,7 @@ router.post('/send/:sender/:receiver', authorization, async (req, res) => {
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ error: 'Server error' });
+        console.log('error di send message');
     }
 });
 

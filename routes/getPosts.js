@@ -12,6 +12,7 @@ router.get('/all', authorization, async (req, res) => {
         res.json(allPosts.rows);
     } catch (err) {
         console.error(err.message);
+        console.log('error di get all post');
     }
 });
 
@@ -25,6 +26,7 @@ router.get('/lost', authorization, async (req, res) => {
         res.json(allPosts.rows);
     } catch (err) {
         console.error(err.message);
+        console.log('error di get lost post');
     }
 });
 
@@ -38,6 +40,7 @@ router.get('/found', authorization, async (req, res) => {
         res.json(allPosts.rows);
     } catch (err) {
         console.error(err.message);
+        console.log('error di get found post');
     }
 });
 
@@ -51,6 +54,7 @@ router.get('/share', authorization, async (req, res) => {
         res.json(allPosts.rows);
     } catch (err) {
         console.error(err.message);
+        console.log('error di get share post');
     }
 });
 

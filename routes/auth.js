@@ -46,6 +46,7 @@ router.post('/register', async (req, res) => {
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ error: 'Server error' });
+        console.log('Error di register');
     }
 });
 
@@ -83,6 +84,7 @@ router.post('/login', validInfo, async (req, res) => {
 
     } catch (err) {
         console.error(err.message);
+        console.log('Error di login');
     }
 });
 
@@ -93,6 +95,7 @@ router.get("/is-verify", authorization, async (req, res) => {
     } catch (err) {
         console.error(err.message);
         res.status(500).send("Server Error");
+        console.log('Error di is-verify');
     }
 });
 
