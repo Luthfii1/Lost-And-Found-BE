@@ -60,7 +60,7 @@ router.get('/:user/:friend', authorization, async (req, res) => {
             WHERE
                 (u1.user_id = $1 AND u2.user_id = $2) OR (u1.user_id = $2 AND u2.user_id = $1)
             ORDER BY
-                dc.time ASC;`,
+                dc.time DESC;`,
             [user, friend]
         );
         res.json(detailChat.rows);
@@ -100,5 +100,32 @@ router.post('/add/:user/:friend', authorization, async (req, res) => {
     }
 });
 
+// Send message
+// check and get existing room
+// SELECT id_room FROM room_chat WHERE (person_1 = 3 AND person_2 = 4) OR (person_1 = 4 AND person_2 = 3);
+// insert message
+// INSERT INTO detail_chat (id_room, sender, receiver, message) VALUES (6, 3, 4, 'Assalamualaykum, look at the stars, look how they shine for you');
+router.post('/send/:sender/:receiver', authorization, async (req, res) => {
+    try {
+        const { sender, receiver } = req.params;
+        const { message } = req.body;
+        const checkRoom = await pool.query(
+            `SELECT id_room FROM room_chat WHERE (person_1 = $1 AND person_2 = $2) OR (person_1 = $2 AND person_2 = $1);`,
+            [sender, receiver]
+        );
+        const idRoom = checkRoom.rows[0].id_room;
+
+        const sendMessage = await pool.query(
+            `INSERT INTO detail_chat (id_room, sender, receiver, message) VALUES ($1, $2, $3, $4);`,
+            [idRoom, sender, receiver, message]
+        );
+
+        res.json(sendMessage.rows);
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
 
 module.exports = router;
