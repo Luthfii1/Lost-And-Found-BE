@@ -56,7 +56,7 @@ router.post('/login', validInfo, async (req, res) => {
     try {
         // get the username and password from the request body
         const { username, password } = req.body;
-
+        
         // check if username already exist
         const checkUsername = await pool.query(
             'SELECT * FROM user_data WHERE username = $1',
@@ -65,6 +65,7 @@ router.post('/login', validInfo, async (req, res) => {
 
         // if username already exist, return error
         if (checkUsername.rows.length === 0) {
+            console.log('Username not found');
             return res.status(401).json('Username not found');
         }
 
@@ -73,6 +74,7 @@ router.post('/login', validInfo, async (req, res) => {
 
         // if password is not correct, return error
         if (!checkPassword) {
+            console.log('Password is incorrect');
             return res.status(401).json('Password is incorrect');
         }
 
