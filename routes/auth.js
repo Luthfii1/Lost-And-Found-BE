@@ -3,7 +3,9 @@ const router = express.Router();
 const pool = require('../config/db');
 const authorization = require('../middleware/authorization');
 const validInfo = require('../middleware/validInfo');
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
+
 const saltRounds = 10;
 const jwtGenerator = require('../utils/jwtGenerator');
 
