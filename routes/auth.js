@@ -79,10 +79,10 @@ router.post('/login', validInfo, async (req, res) => {
         }
 
         // generate jwt token
-        const token = jwtGenerator(checkUsername.rows[0].user_id);
+        const token = jwtGenerator(checkUsername.rows[0].user_id, checkUsername.rows[0].username);
         
         // if username and password is correct, return the token and user_id
-        res.json({ token, user_id: checkUsername.rows[0].user_id });
+        res.json({ token, user_id: checkUsername.rows[0].user_id, username: checkUsername.rows[0].username });
 
     } catch (err) {
         console.error(err.message);

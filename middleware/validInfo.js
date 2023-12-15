@@ -18,7 +18,7 @@ module.exports = async (req, res, next) => {
     if (req.path === "/login") {
         if (![username, password].every(Boolean)) {
             return res.status(401).json("Missing Credentials");
-        } 
+        }
     }
 
     next();
