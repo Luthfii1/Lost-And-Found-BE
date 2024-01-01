@@ -1,4 +1,4 @@
-const Pool = require('pg').Pool
+const Pool = require('pg').Pool;
 
 const pool = new Pool({
     user: process.env.USER,
@@ -8,13 +8,6 @@ const pool = new Pool({
     port: 5432,
     sslmode: 'require',
     ssl: true
-    // user: 'gemilangbramadhan',
-    // host: 'ep-lingering-water-418372.ap-southeast-1.aws.neon.tech',
-    // database: 'percobaan',
-    // password: 'rYRCTEBWoX36',
-    // port: 5432,
-    // sslmode: 'require',
-    // ssl: true
 })
 
 //Melakukan koneksi dan menunjukkan indikasi database terhubung
@@ -25,6 +18,5 @@ pool.connect((err)=>{
     }
     console.log('Database berhasil terkoneksi')
 })
-
 
 module.exports = pool;
